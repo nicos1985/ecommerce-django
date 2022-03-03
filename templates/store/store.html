@@ -26,7 +26,7 @@
                     <h6 class="title">Categorias</h6>
                 </a>
             </header>
-            <div class="filter-content collapse show" id="collapse_1" style="">
+            <div class="filter-content collapse show" id="collapse_1">
                 <div class="card-body">
                     
                     <ul class="list-menu">
@@ -43,10 +43,10 @@
             <header class="card-header">
                 <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
                     <i class="icon-control fa fa-chevron-down"></i>
-                    <h6 class="title">Tamanos </h6>
+                    <h6 class="title">Tamaños </h6>
                 </a>
             </header>
-            <div class="filter-content collapse show" id="collapse_4" style="">
+            <div class="filter-content collapse show" id="collapse_4">
                 <div class="card-body">
                   <label class="checkbox-btn">
                     <input type="checkbox">
@@ -78,7 +78,7 @@
                     <h6 class="title">Precios </h6>
                 </a>
             </header>
-            <div class="filter-content collapse show" id="collapse_3" style="">
+            <div class="filter-content collapse show" id="collapse_3">
                 <div class="card-body">
                     
                     <div class="form-row">
@@ -126,6 +126,8 @@
     </header><!-- sect-heading -->
     
     <div class="row">
+        {% if products %}
+
         {% for product in products %}
         <div class="col-md-4">
             <figure class="card card-product-grid">
@@ -141,23 +143,48 @@
                             <span class="price">$ {{product.price}}</span>
                         </div> <!-- price-wrap.// -->
                     </div>
-                    <a href="#" class="btn btn-block btn-success">Agregar al carrito </a>
+                    <a href="{% url 'add_cart' product.id %}" class="btn btn-block btn-success">Agregar al carrito </a>
                 </figcaption>
             </figure>
         </div> <!-- col.// -->
         {% endfor %}
+        {% else %}
 
+        <div>
+            <h2> No hemos encontrado un producto con ese nombre. Intenta con otro </h2>
+        </div>
+
+        {% endif %}
     </div> <!-- row end.// -->
     
     
     <nav class="mt-4" aria-label="Page navigation sample">
+
+      {% if products.has_other_pages %}  
       <ul class="pagination">
+
+        {% if products.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Anterior</a></li>
+        {% else %}
         <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
-        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">Siguiente</a></li>
-      </ul>
+        {% endif %}
+
+        {% for i in products.paginator.page_range %}
+            {% if products.number == i %}
+                <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+            {% else %}
+             <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>   
+            {% endif %}
+
+        {% endfor %}
+
+        {% if products.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Siguiente</a></li>
+        {% endif %}
+    </ul>
+      {% endif %}
+
+
     </nav>
     
         </main> <!-- col.// -->
