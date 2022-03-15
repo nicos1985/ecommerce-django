@@ -12,11 +12,8 @@ from django.template.loader import render_to_string
 # Create your views here.
 
 def payments(request):
-    
-    
-    
-    body = json.loads(request.body) # captura los valores del body
-    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID']) #obtengo la orden
+    body = json.loads(request.body)
+    order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
 
     payment = Payment(
         user = request.user,
@@ -25,13 +22,11 @@ def payments(request):
         amount_id = order.order_total,
         status = body['status'],
     )
-    payment.save() # guardo el payment en la base
+    payment.save()
 
     order.payment = payment
     order.is_ordered = True
-    order.save()  # guardo la orden en la base
-    
-    return render(request, 'orders/payments.html')
+    order.save()
 
     # Mover todos los carrito items hacia la tabla order product
     cart_items = CartItem.objects.filter(user=request.user)
@@ -166,4 +161,4 @@ def order_complete(request):
         }
         return render(request, 'orders/order_complete.html', context)
     except(Payment.DoesNotExist, Order.DoesNotExist):
-        return redirect('home')
+        return redirect('store')
